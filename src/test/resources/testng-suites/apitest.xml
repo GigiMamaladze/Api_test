@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite verbose="1" thread-count="5" name="API Integration Tests" parallel="tests" annotations="JDK">
+
+    <test name="User tests">
+        <classes>
+            <class name="ApiTest"/>
+        </classes>
+    </test>
+</suite>
