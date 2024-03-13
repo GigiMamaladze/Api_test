@@ -8,11 +8,17 @@ import static io.restassured.RestAssured.given;
 
 public class ApiService {
 
+    private final String BEARER_TOKEN = "Bearer 17a915d98bc061595c53aa898006e9e63a8d5935bfe8d316b0399ebbd31af775";
+
+    private final String CONTENT_TYPE = "application/json";
+
+    private final String CONNECTION = "keep-alive";
+
     public User createUser(User user) {
         Response createResponse = given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(user)
                 .post("/users");
@@ -25,9 +31,9 @@ public class ApiService {
 
     public User getUser(Long userId) {
         Response getResponse = given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .get("/users/" + userId);
 
@@ -41,9 +47,9 @@ public class ApiService {
 
     public void deleteUser(Long userId) {
         Response deleteResponse = given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .delete("/users/" + userId);
 

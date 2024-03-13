@@ -40,9 +40,9 @@ public class GraphQLTests extends BaseTest {
 
     private Response sendRequestWithBody(String requestBody) {
         return given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .body(requestBody)
                 .when()
                 .post(ENDPOINT);
@@ -123,18 +123,18 @@ public class GraphQLTests extends BaseTest {
         User user = generateRandomUser();
         user = graphQLService.createUser(user);
         Response response = given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .body(readRequestBodyFromFile("delete_user_mutation.json"))
                 .when()
                 .post(ENDPOINT);
         response.prettyPrint();
         response.then().statusCode(200);
         Response getResponse = given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .body(readRequestBodyFromFile("get_user_by_id_query.json"))
                 .when()
                 .post(ENDPOINT);

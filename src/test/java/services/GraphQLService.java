@@ -16,6 +16,12 @@ public class GraphQLService {
     private final String ENDPOINT;
     private final String REQUEST_BODY_DIRECTORY = "src/test/resources/graphql/";
 
+    private final String BEARER_TOKEN = "Bearer 17a915d98bc061595c53aa898006e9e63a8d5935bfe8d316b0399ebbd31af775";
+
+    private final String CONTENT_TYPE = "application/json";
+
+    private final String CONNECTION = "keep-alive";
+
     public GraphQLService(String ENDPOINT) {
         this.ENDPOINT = ENDPOINT;
     }
@@ -27,9 +33,9 @@ public class GraphQLService {
 
     private Response sendRequestWithBody(String requestBody) {
         return given()
-                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
-                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
-                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .body(requestBody)
                 .when()
                 .post(ENDPOINT);

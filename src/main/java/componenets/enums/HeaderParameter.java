@@ -2,11 +2,11 @@ package componenets.enums;
 
 public enum HeaderParameter {
 
-    AUTHORIZATION("Bearer 17a915d98bc061595c53aa898006e9e63a8d5935bfe8d316b0399ebbd31af775"),
+    AUTHORIZATION("Authorization"),
 
-    CONTENT_TYPE("application/json"),
+    CONTENT_TYPE("Content-Type"),
 
-    CONNECTION("keep-alive");
+    CONNECTION("Connection");
 
     private String parameter;
 
