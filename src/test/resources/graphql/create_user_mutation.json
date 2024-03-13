@@ -1,0 +1,3 @@
+{
+  "query": "mutation CreateUser { createUser( input: { name: \"{{userName}}\", email: \"{{userEmail}}\", gender: \"{{userGender}}\", status: \"{{userStatus}}\" } ) { user { id email gender name status } }}"
+}

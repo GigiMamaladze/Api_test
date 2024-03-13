@@ -1,0 +1,3 @@
+{
+  "query": "query Users { users { nodes { id email gender name status } }}"
+}
