@@ -1,23 +1,18 @@
 package services;
 
+import componenets.enums.HeaderParameter;
 import io.restassured.response.Response;
-import objects.User;
+import componenets.objects.User;
 
 import static io.restassured.RestAssured.given;
 
 public class ApiService {
 
-    private final String bearerToken;
-
-    public ApiService(String bearerToken) {
-        this.bearerToken = bearerToken;
-    }
-
     public User createUser(User user) {
         Response createResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .body(user)
                 .post("/users");
@@ -30,9 +25,9 @@ public class ApiService {
 
     public User getUser(Long userId) {
         Response getResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .get("/users/" + userId);
 
@@ -46,9 +41,9 @@ public class ApiService {
 
     public void deleteUser(Long userId) {
         Response deleteResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .delete("/users/" + userId);
 

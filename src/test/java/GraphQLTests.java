@@ -1,5 +1,6 @@
+import componenets.enums.HeaderParameter;
 import io.restassured.response.Response;
-import objects.User;
+import componenets.objects.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -16,12 +17,19 @@ public class GraphQLTests extends BaseTest {
 
     private final List<Long> userIds = new ArrayList<>();
     private final String ENDPOINT = "https://gorest.co.in/public/v2/graphql";
-    private final GraphQLService graphQLService = new GraphQLService(BEARER_TOKEN, ENDPOINT);
+    private final GraphQLService graphQLService = new GraphQLService(ENDPOINT);
     private final String REQUEST_BODY_DIRECTORY = "src/test/resources/graphql/";
 
     @AfterMethod(groups = "created", alwaysRun = true)
     public void deleteCreatedUser() {
-        userIds.forEach(graphQLService::deleteUser);
+        for (Long userId : userIds) {
+            try {
+                graphQLService.deleteUser(userId);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Assert.fail("An error occurred while deleting user with ID " + userId + ": " + e.getMessage());
+            }
+        }
         userIds.clear();
     }
 
@@ -32,9 +40,9 @@ public class GraphQLTests extends BaseTest {
 
     private Response sendRequestWithBody(String requestBody) {
         return given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", CONTENT_TYPE)
-                .header("Connection", CONNECTION)
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .body(requestBody)
                 .when()
                 .post(ENDPOINT);
@@ -115,18 +123,18 @@ public class GraphQLTests extends BaseTest {
         User user = generateRandomUser();
         user = graphQLService.createUser(user);
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", CONTENT_TYPE)
-                .header("Connection", CONNECTION)
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .body(readRequestBodyFromFile("delete_user_mutation.json"))
                 .when()
                 .post(ENDPOINT);
         response.prettyPrint();
         response.then().statusCode(200);
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", CONTENT_TYPE)
-                .header("Connection", CONNECTION)
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .body(readRequestBodyFromFile("get_user_by_id_query.json"))
                 .when()
                 .post(ENDPOINT);

@@ -1,86 +1,82 @@
 package services;
 
+import componenets.enums.HeaderParameter;
+import componenets.objects.User;
 import io.restassured.response.Response;
-import objects.User;
 import org.testng.Assert;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
 
 public class GraphQLService {
 
-    private final String BEARER_TOKEN;
-
     private final String ENDPOINT;
+    private final String REQUEST_BODY_DIRECTORY = "src/test/resources/graphql/";
 
-    public GraphQLService(String BEARER_TOKEN, String ENDPOINT) {
-        this.BEARER_TOKEN = BEARER_TOKEN;
+    public GraphQLService(String ENDPOINT) {
         this.ENDPOINT = ENDPOINT;
     }
 
-    public User getUser(Long userId) {
-        Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+    private String readRequestBodyFromFile(String fileName) throws IOException {
+        String filePath = REQUEST_BODY_DIRECTORY + fileName;
+        return new String(Files.readAllBytes(Paths.get(filePath)));
+    }
+
+    private Response sendRequestWithBody(String requestBody) {
+        return given()
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
+                .body(requestBody)
                 .when()
-                .body("{\n" +
-                        "  \"query\": \"query User { user(id: \\\"" + userId + "\\\") { email gender id name status }}\"\n" +
-                        "}")
                 .post(ENDPOINT);
+    }
 
+    private String replaceDynamicParameters(String requestBody, Long userId) {
+        return requestBody.replace("{{userId}}", String.valueOf(userId));
+    }
+
+    private String replaceDynamicParameters(String requestBody, User user) {
+        return requestBody.replace("{{userId}}", String.valueOf(user.getId()))
+                .replace("{{userName}}", user.getName())
+                .replace("{{userEmail}}", user.getEmail())
+                .replace("{{userGender}}", user.getGender())
+                .replace("{{userStatus}}", user.getStatus());
+    }
+
+    //===================================== Services =======================================
+
+    public User getUser(Long userId) throws IOException {
+        String requestBody = readRequestBodyFromFile("get_user_by_id_query.json");
+        requestBody = replaceDynamicParameters(requestBody, userId);
+        Response response = sendRequestWithBody(requestBody);
         User getUser = response.jsonPath().getObject("data.user", User.class);
-
         response.prettyPrint();
         response.then().statusCode(200);
-
         return getUser;
     }
 
-    public User createUser(User user) {
-        Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
-                .body("{\n" +
-                        "  \"query\": \"mutation CreateUser { createUser( input: { name: \\\"" + user.getName() + "\\\", email: \\\"" + user.getEmail() + "\\\", " +
-                        "gender: \\\"" + user.getGender() + "\\\", status: \\\"" + user.getStatus() + "\\\" } ) { user { email gender id name status } }}\"\n" +
-                        "}")
-                .when()
-                .post(ENDPOINT);
-
+    public User createUser(User user) throws IOException {
+        String requestBody = readRequestBodyFromFile("create_user_mutation.json");
+        requestBody = replaceDynamicParameters(requestBody, user);
+        Response response = sendRequestWithBody(requestBody);
         response.prettyPrint();
         response.then().statusCode(200);
-
         return response.jsonPath().getObject("data.createUser.user", User.class);
     }
 
-    public void deleteUser(Long userId) {
-        Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
-                .body("{\n" +
-                        "  \"query\": \"mutation DeleteUser { deleteUser(input: { id: \\" + userId + "\\ }) { user { id email gender name status } }}\"\n" +
-                        "}")
-                .when()
-                .post(ENDPOINT);
-
+    public void deleteUser(Long userId) throws IOException {
+        String requestBody = readRequestBodyFromFile("delete_user_mutation.json");
+        requestBody = replaceDynamicParameters(requestBody, userId);
+        Response response = sendRequestWithBody(requestBody);
         response.prettyPrint();
         response.then().statusCode(200);
-
-        Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
-                .when()
-                .body("{\n" +
-                        "  \"query\": \"query User { user(id: \\" + userId + "\\) { email gender id name status }}\"\n" +
-                        "}")
-                .post(ENDPOINT);
-
+        Response getResponse = sendRequestWithBody(readRequestBodyFromFile("get_user_by_id_query.json"));
         getResponse.prettyPrint();
         String errorMessage = getResponse.jsonPath().getString("errors[0].message");
-
         // Verifying the error message
         Assert.assertEquals(errorMessage, "Resource not found!", "Error message mismatch");
     }

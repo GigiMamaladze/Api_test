@@ -1,4 +1,4 @@
-package objects;
+package componenets.objects;
 
 import java.util.Objects;
 

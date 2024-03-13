@@ -1,6 +1,7 @@
+import componenets.enums.HeaderParameter;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import objects.User;
+import componenets.objects.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -17,7 +18,7 @@ public class ApiTest extends BaseTest {
 
     private final List<Long> userIds = new ArrayList<>();
 
-    private final ApiService apiService = new ApiService(BEARER_TOKEN);
+    private final ApiService apiService = new ApiService();
 
     @BeforeTest
     public static void init() {
@@ -54,9 +55,9 @@ public class ApiTest extends BaseTest {
         userIds.add(createdUser.getId());
 
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .get("/users/" + createdUser.getId());
 
@@ -77,9 +78,9 @@ public class ApiTest extends BaseTest {
         user.setGender("male");
         user.setStatus("inactive");
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .body(user)
                 .post("/users");
@@ -107,9 +108,9 @@ public class ApiTest extends BaseTest {
         updatedUser.setName("UpdatedName");
 
         Response putResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .body(updatedUser)
                 .put("/users/" + user.getId());
@@ -129,9 +130,9 @@ public class ApiTest extends BaseTest {
         createdUser = apiService.createUser(createdUser);
 
         Response deleteResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .delete("/users/" + createdUser.getId());
 
@@ -139,9 +140,9 @@ public class ApiTest extends BaseTest {
         deleteResponse.then().statusCode(204);
 
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .get("/users/" + createdUser.getId());
 
@@ -152,9 +153,9 @@ public class ApiTest extends BaseTest {
     @Test
     public void getUserWithInvalidIdTest() {
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .get("/users/" + RandomStringUtils.randomNumeric(100));
 
@@ -165,9 +166,9 @@ public class ApiTest extends BaseTest {
     @Test
     public void deleteUserWithInvalidUserIdTest() {
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .delete("/users/" + RandomStringUtils.randomNumeric(100));
 
@@ -185,9 +186,9 @@ public class ApiTest extends BaseTest {
         updatedUser.setName("UpdatedName");
 
         Response putResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .body(updatedUser)
                 .put("/users/" + RandomStringUtils.randomNumeric(100));
@@ -200,9 +201,9 @@ public class ApiTest extends BaseTest {
     public void createUserWithMissingFieldsTest() {
         User user = new User();
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .body(user)
                 .post("/users");
@@ -220,9 +221,9 @@ public class ApiTest extends BaseTest {
         user.setStatus("inactive");
 
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header("Authorization", HeaderParameter.AUTHORIZATION.getParameter())
+                .header("Content-Type", HeaderParameter.CONTENT_TYPE.getParameter())
+                .header("Connection", HeaderParameter.CONNECTION.getParameter())
                 .when()
                 .body(user)
                 .post("/users");
