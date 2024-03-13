@@ -13,9 +13,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
-public class ApiTest {
-
-    private final String BEARER_TOKEN = "Bearer 17a915d98bc061595c53aa898006e9e63a8d5935bfe8d316b0399ebbd31af775";
+public class ApiTest extends BaseTest {
 
     private final List<Long> userIds = new ArrayList<>();
 
@@ -33,18 +31,8 @@ public class ApiTest {
         userIds.clear();
     }
 
-    public User generateRandomUser() {
-        User user = new User();
-        user.setName(RandomStringUtils.randomAlphabetic(5));
-        user.setEmail(RandomStringUtils.randomAlphabetic(6) + "@gmail.com");
-        user.setGender("male");
-        user.setStatus("inactive");
 
-        return user;
-    }
-
-
-    // ========================================== Token =====================================================
+    // ========================================== Tests =====================================================
 
     @Test
     public void getAllUsersTest() {
@@ -63,6 +51,7 @@ public class ApiTest {
     public void getUserByIdTest() {
         User createdUser = generateRandomUser();
         createdUser = apiService.createUser(createdUser);
+        userIds.add(createdUser.getId());
 
         Response getResponse = given()
                 .header("Authorization", BEARER_TOKEN)
