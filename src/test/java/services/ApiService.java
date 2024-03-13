@@ -1,23 +1,24 @@
 package services;
 
+import componenets.enums.HeaderParameter;
 import io.restassured.response.Response;
-import objects.User;
+import componenets.objects.User;
 
 import static io.restassured.RestAssured.given;
 
 public class ApiService {
 
-    private final String bearerToken;
+    private final String BEARER_TOKEN = "Bearer 17a915d98bc061595c53aa898006e9e63a8d5935bfe8d316b0399ebbd31af775";
 
-    public ApiService(String bearerToken) {
-        this.bearerToken = bearerToken;
-    }
+    private final String CONTENT_TYPE = "application/json";
+
+    private final String CONNECTION = "keep-alive";
 
     public User createUser(User user) {
         Response createResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(user)
                 .post("/users");
@@ -25,28 +26,14 @@ public class ApiService {
         createResponse.prettyPrint();
         createResponse.then().statusCode(201);
 
-        User createdUser = createResponse.as(User.class);
-        return createdUser;
-    }
-
-    public void updateUser(User user) {
-        Response putResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
-                .when()
-                .body(user)
-                .put("/users/" + user.getId());
-
-        putResponse.prettyPrint();
-        putResponse.then().statusCode(200);
+        return createResponse.as(User.class);
     }
 
     public User getUser(Long userId) {
         Response getResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .get("/users/" + userId);
 
@@ -60,9 +47,9 @@ public class ApiService {
 
     public void deleteUser(Long userId) {
         Response deleteResponse = given()
-                .header("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .delete("/users/" + userId);
 

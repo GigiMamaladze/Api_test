@@ -1,0 +1,3 @@
+{
+  "query": "mutation DeleteUser { deleteUser(input: { id: {{userId}} }) { user { id email gender name status } }}"
+}

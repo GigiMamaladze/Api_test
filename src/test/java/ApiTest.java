@@ -1,6 +1,7 @@
+import componenets.enums.HeaderParameter;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import objects.User;
+import componenets.objects.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -13,13 +14,11 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
-public class ApiTest {
-
-    private final String BEARER_TOKEN = "Bearer 17a915d98bc061595c53aa898006e9e63a8d5935bfe8d316b0399ebbd31af775";
+public class ApiTest extends BaseTest {
 
     private final List<Long> userIds = new ArrayList<>();
 
-    private final ApiService apiService = new ApiService(BEARER_TOKEN);
+    private final ApiService apiService = new ApiService();
 
     @BeforeTest
     public static void init() {
@@ -33,18 +32,8 @@ public class ApiTest {
         userIds.clear();
     }
 
-    public User generateRandomUser() {
-        User user = new User();
-        user.setName(RandomStringUtils.randomAlphabetic(5));
-        user.setEmail(RandomStringUtils.randomAlphabetic(6) + "@gmail.com");
-        user.setGender("male");
-        user.setStatus("inactive");
 
-        return user;
-    }
-
-
-    // ========================================== Token =====================================================
+    // ========================================== Tests =====================================================
 
     @Test
     public void getAllUsersTest() {
@@ -63,11 +52,12 @@ public class ApiTest {
     public void getUserByIdTest() {
         User createdUser = generateRandomUser();
         createdUser = apiService.createUser(createdUser);
+        userIds.add(createdUser.getId());
 
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .get("/users/" + createdUser.getId());
 
@@ -88,9 +78,9 @@ public class ApiTest {
         user.setGender("male");
         user.setStatus("inactive");
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(user)
                 .post("/users");
@@ -118,9 +108,9 @@ public class ApiTest {
         updatedUser.setName("UpdatedName");
 
         Response putResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(updatedUser)
                 .put("/users/" + user.getId());
@@ -140,9 +130,9 @@ public class ApiTest {
         createdUser = apiService.createUser(createdUser);
 
         Response deleteResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .delete("/users/" + createdUser.getId());
 
@@ -150,9 +140,9 @@ public class ApiTest {
         deleteResponse.then().statusCode(204);
 
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .get("/users/" + createdUser.getId());
 
@@ -163,9 +153,9 @@ public class ApiTest {
     @Test
     public void getUserWithInvalidIdTest() {
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .get("/users/" + RandomStringUtils.randomNumeric(100));
 
@@ -176,9 +166,9 @@ public class ApiTest {
     @Test
     public void deleteUserWithInvalidUserIdTest() {
         Response getResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .delete("/users/" + RandomStringUtils.randomNumeric(100));
 
@@ -196,9 +186,9 @@ public class ApiTest {
         updatedUser.setName("UpdatedName");
 
         Response putResponse = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(updatedUser)
                 .put("/users/" + RandomStringUtils.randomNumeric(100));
@@ -211,9 +201,9 @@ public class ApiTest {
     public void createUserWithMissingFieldsTest() {
         User user = new User();
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(user)
                 .post("/users");
@@ -231,9 +221,9 @@ public class ApiTest {
         user.setStatus("inactive");
 
         Response response = given()
-                .header("Authorization", BEARER_TOKEN)
-                .header("Content-Type", "application/json")
-                .header("Connection", "keep-alive")
+                .header(HeaderParameter.AUTHORIZATION.getParameter(), BEARER_TOKEN)
+                .header(HeaderParameter.CONTENT_TYPE.getParameter(), CONTENT_TYPE)
+                .header(HeaderParameter.CONNECTION.getParameter(), CONNECTION)
                 .when()
                 .body(user)
                 .post("/users");
